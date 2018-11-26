@@ -673,6 +673,79 @@ describe('tooltip', function() {
     }));
   });
 
+  describe('with an append-to attribute', function() {
+    var scope, elmBody, elm, elmScope, $body;
+
+    beforeEach(inject(function($rootScope) {
+      scope = $rootScope;
+    }));
+
+    afterEach(function() {
+      $body.find('.tooltip').remove();
+    });
+
+    it('should append to the element with class "parent"', inject(function($compile, $document) {
+      $body = $document.find('body');
+      elmBody = angular.element(
+        '<div class="parent"><span uib-tooltip="tooltip text" tooltip-append-to=".parent">Selector Text</span></div>'
+      );
+
+      $compile(elmBody)(scope);
+      scope.$digest();
+      elm = elmBody.find('span');
+      elmScope = elm.scope();
+      tooltipScope = elmScope.$$childTail;
+
+      var bodyLength = $body.children().length;
+      trigger(elm, 'mouseenter');
+      expect(tooltipScope.isOpen).toBe(true);
+      expect(elmBody.children().length).toBe(2);
+      expect($body.children().length).toEqual(bodyLength);
+    }));
+
+    it('should append to the body', inject(function($compile, $document) {
+      $body = $document.find('body');
+      elmBody = angular.element(
+        '<div class="parent"><span uib-tooltip="tooltip text" tooltip-append-to-body="true" tooltip-append-to=".parent">Selector Text</span></div>'
+      );
+
+      $compile(elmBody)(scope);
+      scope.$digest();
+      elm = elmBody.find('span');
+      elmScope = elm.scope();
+      tooltipScope = elmScope.$$childTail;
+
+      var bodyLength = $body.children().length;
+      trigger(elm, 'mouseenter');
+
+      expect(tooltipScope.isOpen).toBe(true);
+      expect(elmBody.children().length).toBe(1);
+      expect($body.children().length).toEqual(bodyLength + 1);
+
+    }));
+
+    it('should append to the body if does not match selector', inject(function($compile, $document) {
+      $body = $document.find('body');
+      elmBody = angular.element(
+        '<div class="parent"><span uib-tooltip="tooltip text" tooltip-append-to-body="true" tooltip-append-to=".broken">Selector Text</span></div>'
+      );
+
+      $compile(elmBody)(scope);
+      scope.$digest();
+      elm = elmBody.find('span');
+      elmScope = elm.scope();
+      tooltipScope = elmScope.$$childTail;
+
+      var bodyLength = $body.children().length;
+      
+      trigger(elm, 'mouseenter');
+      expect(tooltipScope.isOpen).toBe(true);
+      expect(elmBody.children().length).toBe(1);
+      expect($body.children().length).toEqual(bodyLength + 1);
+
+    }));
+  });
+
   describe('cleanup', function() {
     var elmBody, elm, elmScope, tooltipScope;
 

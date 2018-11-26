@@ -146,6 +146,7 @@ angular.module('ui.bootstrap.tooltip', ['ui.bootstrap.position', 'ui.bootstrap.s
             var positionTimeout;
             var adjustmentTimeout;
             var appendToBody = angular.isDefined(options.appendToBody) ? options.appendToBody : false;
+            var appendTo = angular.isDefined(attrs[prefix + 'AppendTo']) ? attrs[prefix + 'AppendTo'] : false;
             var triggers = getTriggers(undefined);
             var hasEnableExp = angular.isDefined(attrs[prefix + 'Enable']);
             var ttScope = scope.$new(true);
@@ -327,11 +328,15 @@ angular.module('ui.bootstrap.tooltip', ['ui.bootstrap.position', 'ui.bootstrap.s
 
               tooltipLinkedScope = ttScope.$new();
               tooltip = tooltipLinker(tooltipLinkedScope, function(tooltip) {
+
                 if (appendToBody) {
                   $document.find('body').append(tooltip);
+                } else if (appendTo) {
+                  angular.element(closest(element[0], appendTo)).append(tooltip);
                 } else {
                   element.after(tooltip);
                 }
+
               });
 
               openedTooltips.add(ttScope, {
@@ -339,6 +344,18 @@ angular.module('ui.bootstrap.tooltip', ['ui.bootstrap.position', 'ui.bootstrap.s
               });
 
               prepObservers();
+            }
+
+            function closest (element, selectors) {
+              while (element) {
+                if (element.matches(selectors)) {
+                  return element;
+                }
+
+                element = element.parentElement;
+
+              }
+              return null;
             }
 
             function removeTooltip() {

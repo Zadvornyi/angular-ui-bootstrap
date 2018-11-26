@@ -31,7 +31,11 @@ All these settings are available for the three types of tooltips.
   <small class="badge">C</small>
   _(Default: `false`, Config: `appendToBody`)_ -
   Should the tooltip be appended to '$body' instead of the parent element?
-
+  
+* `tooltip-append-to`
+  <small class="badge">$</small>
+  _(Default: `null`)_ -
+  Appends the closes DOM element according to CSS selector.  
 * `tooltip-class` -
   Custom class to be applied to the tooltip.
 
